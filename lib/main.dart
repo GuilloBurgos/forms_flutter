@@ -162,7 +162,11 @@ class _RegistroPage extends State<RegistroPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController telefonoController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmarPasswordController = TextEditingController();
+  final TextEditingController confirmarPasswordController =
+      TextEditingController();
+
+  bool _mostrarPassword = false;
+  bool _mostrarConfirmPassword = false;
 
   void registroUsuario() {
     if (_formkey.currentState!.validate()) {
@@ -230,6 +234,19 @@ class _RegistroPage extends State<RegistroPage> {
                   if (value == null || value.isEmpty) {
                     return "Por favor ingresa tu nombre";
                   }
+
+                  if (value.length < 3) {
+                    return "El nombre debe tener al menos 3 letras";
+                  }
+
+                  
+ 
+if (!RegExp(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+(?:\s[a-zA-ZáéíóúÁÉÍÓÚñÑ]+)*$').hasMatch(value)) {
+      return "Solo letras y espacios (sin espacios al inicio)";
+    }
+
+
+
                   return null;
                 },
               ),
@@ -273,17 +290,31 @@ class _RegistroPage extends State<RegistroPage> {
                   return null;
                 },
               ),
+
               const SizedBox(height: 15),
+
               TextFormField(
                 controller: passwordController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: "Contraseña",
                   border: OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _mostrarPassword
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _mostrarPassword = !_mostrarPassword;
+                      });
+                    },
+                  ),
                 ),
-                obscureText: true,
+                obscureText: !_mostrarPassword,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "Por favor ingresa tu telefono";
+                    return "Por favor ingresa tu contraseña";
                   }
 
                   if (value.length < 6) {
@@ -295,11 +326,23 @@ class _RegistroPage extends State<RegistroPage> {
               const SizedBox(height: 15),
               TextFormField(
                 controller: confirmarPasswordController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: "Confirmar contraseña",
                   border: OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _mostrarConfirmPassword
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _mostrarConfirmPassword = !_mostrarConfirmPassword;
+                      });
+                    },
+                  ),
                 ),
-                obscureText: true,
+                obscureText: !_mostrarConfirmPassword,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "Confirma tu contraseña";
