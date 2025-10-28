@@ -280,6 +280,7 @@ class _RegistroPage extends State<RegistroPage> {
                   labelText: "Contraseña",
                   border: OutlineInputBorder(),
                 ),
+                obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "Por favor ingresa tu telefono";
@@ -295,16 +296,17 @@ class _RegistroPage extends State<RegistroPage> {
               TextFormField(
                 controller: confirmarPasswordController,
                 decoration: const InputDecoration(
-                  labelText: "Contraseña",
+                  labelText: "Confirmar contraseña",
                   border: OutlineInputBorder(),
                 ),
+                obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "Por favor ingresa tu telefono";
+                    return "Confirma tu contraseña";
                   }
 
-                  if (value.length < 6) {
-                    return "Debe tener al menos 6 caracteres";
+                  if (value != passwordController.text) {
+                    return "Las contraseñas no coinciden";
                   }
                   return null;
                 },
