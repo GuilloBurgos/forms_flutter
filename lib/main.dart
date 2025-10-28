@@ -1,4 +1,7 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 void main() {
   runApp(const RegistroApp());
@@ -157,19 +160,43 @@ class RegistroPage extends StatefulWidget {
 
 class _RegistroPage extends State<RegistroPage> {
   final _formkey = GlobalKey<FormState>();
-
   final TextEditingController nombreController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController telefonoController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmarPasswordController =
-      TextEditingController();
-
+  final TextEditingController confirmarPasswordController =  TextEditingController();
   bool _mostrarPassword = false;
   bool _mostrarConfirmPassword = false;
 
+  File? _imagenSeleccionada;
+  String? _imagenSeleccionadaWeb;
+
+  Future<void> seleccionarImagen() async{
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        
+ if (kIsWeb) {
+          _imagenSeleccionadaWeb = pickedFile.path; // blob URL para web
+        } else {
+          _imagenSeleccionada = File(pickedFile.path);
+        }
+
+      });
+    }
+  }
   void registroUsuario() {
     if (_formkey.currentState!.validate()) {
+
+     
+ if (_imagenSeleccionada == null && _imagenSeleccionadaWeb == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Debes seleccionar una imagen')),
+        );
+        return;
+      }
+
       String nombre = nombreController.text;
       String email = emailController.text;
 
@@ -186,6 +213,14 @@ class _RegistroPage extends State<RegistroPage> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              CircleAvatar(
+               
+ radius: 40,
+                backgroundImage: kIsWeb
+                    ? (_imagenSeleccionadaWeb != null ? NetworkImage(_imagenSeleccionadaWeb!) : null)
+                    : (_imagenSeleccionada != null ? FileImage(_imagenSeleccionada!) : null),
+
+              ),
               const Icon(Icons.check_circle, color: Colors.green, size: 60),
               const SizedBox(height: 15),
               Text("Bienvenido, $nombre", style: TextStyle(fontSize: 16)),
@@ -224,6 +259,24 @@ class _RegistroPage extends State<RegistroPage> {
           key: _formkey,
           child: ListView(
             children: [
+              Center(
+                child: GestureDetector(
+                  onTap: seleccionarImagen,
+                  child: CircleAvatar(
+                    radius: 50,
+                    
+backgroundImage: kIsWeb
+                        ? (_imagenSeleccionadaWeb != null ? NetworkImage(_imagenSeleccionadaWeb!) : null)
+                        : (_imagenSeleccionada != null ? FileImage(_imagenSeleccionada!) : null),
+
+                    
+child: (_imagenSeleccionada == null && _imagenSeleccionadaWeb == null)
+                        ? const Icon(Icons.person, size: 40, color: Colors.grey)
+                        : null,
+
+                  ),
+                ),
+              ),
               TextFormField(
                 controller: nombreController,
                 decoration: InputDecoration(
@@ -234,19 +287,12 @@ class _RegistroPage extends State<RegistroPage> {
                   if (value == null || value.isEmpty) {
                     return "Por favor ingresa tu nombre";
                   }
-
                   if (value.length < 3) {
                     return "El nombre debe tener al menos 3 letras";
-                  }
-
-                  
- 
+                  }    
 if (!RegExp(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+(?:\s[a-zA-ZáéíóúÁÉÍÓÚñÑ]+)*$').hasMatch(value)) {
       return "Solo letras y espacios (sin espacios al inicio)";
     }
-
-
-
                   return null;
                 },
               ),
