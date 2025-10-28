@@ -162,8 +162,7 @@ class _RegistroPage extends State<RegistroPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController telefonoController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmarPasswordController =
-      TextEditingController();
+  final TextEditingController confirmarPasswordController = TextEditingController();
 
   void registroUsuario() {
     if (_formkey.currentState!.validate()) {
@@ -277,6 +276,24 @@ class _RegistroPage extends State<RegistroPage> {
               const SizedBox(height: 15),
               TextFormField(
                 controller: passwordController,
+                decoration: const InputDecoration(
+                  labelText: "Contraseña",
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Por favor ingresa tu telefono";
+                  }
+
+                  if (value.length < 6) {
+                    return "Debe tener al menos 6 caracteres";
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 15),
+              TextFormField(
+                controller: confirmarPasswordController,
                 decoration: const InputDecoration(
                   labelText: "Contraseña",
                   border: OutlineInputBorder(),
